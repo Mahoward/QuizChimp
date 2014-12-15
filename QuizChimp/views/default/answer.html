@@ -1,0 +1,83 @@
+{{extend 'layout.html'}}
+<script>
+
+  function getRes(type, id){
+    var qDiv = document.getElementById(id);
+    var responses = [];
+    {{for r in rList:}}
+      //console.log('{"q": {{=r.question}}, "r" : {{=r.response}}}');
+      responses.push('{{=r.question}}');
+      responses.push('{{=r.response}}')
+      {{pass}}
+    //console.log(responses);
+    switch(type){
+      case 1:
+        console.log("fill in the blank");
+        var aDiv= document.createElement('div');
+        aDiv.innerHTML= '<input type="text" name="fill" id="'+id+'" class="ans" />';
+        qDiv.appendChild(aDiv);
+        break;
+      case 2:
+        console.log("multiple choice");
+        for(var i = 0; i < responses.length; i++){
+          if(responses[i] == id){
+            var aDiv= document.createElement('div');
+            i++;
+            var view = responses[i].split("_").join(" ");
+            aDiv.innerHTML= '<input type="radio" name="mult" id="'+id+'" class="ans" value='+responses[i]+' /> '+view;
+            qDiv.appendChild(aDiv);
+          }
+        }
+        break;
+      case 3:
+        console.log("radio");
+        for(var i = 0; i < responses.length; i++){
+          if(responses[i] == id){
+            i++;
+            for(var w = 0; w < responses[i]; w++){
+              var aDiv= document.createElement('div');
+              aDiv.innerHTML= '<input type="radio" name="rad" id="'+id+'" class="ans" value='+(w+1)+' /> '+(w+1);
+              qDiv.appendChild(aDiv);
+            }
+          }
+        }
+        break;
+    }
+  }
+  function submitSurvey(){
+    var ansArr = document.getElementsByClassName('ans');
+    var submitArr = [];
+    var url = '{{=URL('default', 'submitSurvey', args=[survey])}}'
+    for(var i = 0; i < ansArr.length; i++){
+      if(ansArr[i].name == 'fill' && ansArr[i].value != ''){
+        //console.log(ansArr[i].value);
+        submitArr.push(ansArr[i].id);
+        submitArr.push(ansArr[i].value);
+      }else if(ansArr[i].checked){
+        //console.log(ansArr[i].value);
+        submitArr.push(ansArr[i].id);
+        submitArr.push(ansArr[i].value);
+      }
+    }
+    for(i = 0; i<submitArr.length; i++){
+      var args = '/'+ submitArr[i];
+      i++;
+      args = args + '/'+submitArr[i];
+      args = args.split(" ").join("_");
+      console.log(url+args);
+      ajax(url+args, [], ':eval');
+    }
+    ajax('{{=URL('default', 'doneSurvey', args=[survey])}}', [], ':eval');
+  }
+</script>
+{{for q in qList:}}
+  <form id='{{=q.id}}'>
+    <b>{{=H4(q.question)}}</b>
+  </form>
+  <script>
+  getRes({{=q.question_type}}, {{=q.id}})
+
+
+  </script>
+{{pass}}
+<button onclick='submitSurvey()'>Submit</button>

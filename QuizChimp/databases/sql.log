@@ -1,0 +1,103 @@
+timestamp: 2014-12-11T01:34:00.579940
+CREATE TABLE auth_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name CHAR(128),
+    last_name CHAR(128),
+    email CHAR(512),
+    password CHAR(512),
+    registration_key CHAR(512),
+    reset_password_key CHAR(512),
+    registration_id CHAR(512)
+);
+success!
+timestamp: 2014-12-11T01:34:00.586972
+CREATE TABLE auth_group(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2014-12-11T01:34:00.591940
+CREATE TABLE auth_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE
+);
+success!
+timestamp: 2014-12-11T01:34:00.595019
+CREATE TABLE auth_permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2014-12-11T01:34:00.621607
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2014-12-11T01:34:00.629232
+CREATE TABLE auth_cas(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    created_on TIMESTAMP,
+    service CHAR(512),
+    ticket CHAR(512),
+    renew CHAR(1)
+);
+success!
+timestamp: 2014-12-11T01:34:00.646260
+CREATE TABLE surveys(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title CHAR(512),
+    description CHAR(512),
+    author CHAR(512)
+);
+success!
+timestamp: 2014-12-11T01:34:00.650351
+CREATE TABLE q_type(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type CHAR(512)
+);
+success!
+timestamp: 2014-12-11T01:34:00.714453
+CREATE TABLE questions(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question CHAR(512),
+    question_type INTEGER REFERENCES q_type (id) ON DELETE CASCADE,
+    survey INTEGER REFERENCES surveys (id) ON DELETE CASCADE,
+    author CHAR(512)
+);
+success!
+timestamp: 2014-12-11T01:34:00.747565
+CREATE TABLE responses(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question INTEGER REFERENCES questions (id) ON DELETE CASCADE,
+    response CHAR(512),
+    author CHAR(512),
+    survey INTEGER REFERENCES surveys (id) ON DELETE CASCADE
+);
+success!
+timestamp: 2014-12-11T01:34:00.782821
+CREATE TABLE taken_surveys(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    survey INTEGER REFERENCES surveys (id) ON DELETE CASCADE,
+    author CHAR(512)
+);
+success!
+timestamp: 2014-12-11T01:34:00.821729
+CREATE TABLE answered_questions(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    survey INTEGER REFERENCES surveys (id) ON DELETE CASCADE,
+    question INTEGER REFERENCES questions (id) ON DELETE CASCADE,
+    answer CHAR(512),
+    author CHAR(512)
+);
+success!

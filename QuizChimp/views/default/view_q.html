@@ -1,0 +1,8 @@
+{{extend 'layout.html'}}
+<h1>All Questions For Survey {{=TR(rows.first().survey)}}</h1>
+{{for r in rows:}}
+      <div>
+        {{=TR(r.question)}}
+        {{=UL(r.question_type)}}
+      </div>
+    {{pass}}

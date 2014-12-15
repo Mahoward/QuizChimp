@@ -1,0 +1,92 @@
+{{extend 'layout.html'}}
+<script>
+$(document).ready(function(){
+  var type = {{=qtype}};
+  switch(type){
+    case 1:
+      console.log("one");
+
+      break;
+    case 2:
+      console.log("two");
+      document.getElementById("mult").removeAttribute("hidden");
+      break;
+    case 3:
+      console.log("three");
+      document.getElementById("radial").removeAttribute("hidden");
+      break;
+    default:
+  }
+})
+
+function complete(loc){
+  var type = {{=qtype}};
+  var url = '/'+{{=qid}}+'/'+{{=survey}}+'/';
+  if(type == 2){
+    var elems = document.getElementsByClassName('multAns')
+    for (var i = 0; i < elems.length; i++){
+      ajax('{{=URL('default', 'submitQ')}}'+url+elems[i].value, [], ':eval');
+    }
+  }else if(type == 3){
+    var elem = document.getElementById('radioRes');
+    //console.log(elem.value);
+    ajax('{{=URL('default', 'submitQ')}}'+url+elem.value, [], ':eval');
+  }
+  if(loc == 0){
+    console.log('{{=URL('default', 'submitQ')}}'+url);
+    ajax('{{=URL('default', 'nextq')}}'+'?id='+{{=survey}}+'&qtype='+{{=qtype}}, [], ':eval');
+  }else if (loc == 1){
+    ajax('{{=URL('default', 'leave')}}'+'?id='+{{=survey}}, [], ':eval');
+  }
+}
+
+
+function multRes(numAns){
+  var numInputs = numAns.value;
+  var arr = document.getElementsByClassName("multAns");
+  if(arr.length > numInputs){
+    numInputs = arr.length - numInputs;
+    for(var i = 0; i < numInputs; i++){
+      if(i ==5){console.log("what");}
+      var elmid = "mult"+i;
+      var elem = document.getElementById(elmid);
+      elem.parentNode.removeChild(elem);
+    }
+  }else{
+    numInputs = numInputs-arr.length;
+    if(numInputs > 0){
+      for(var i = 0; i <numInputs; i++){
+        var div= document.createElement('div');
+        div.innerHTML= '<input type="text" name="test" id="mult'+i+'" class="multAns" />';
+        var mult = document.getElementById('mult');
+        mult.appendChild(div);
+      }
+    }
+  }
+}
+
+
+</script>
+<h1>Add a response to qustion {{=qid}}</h1>
+<div class="response">
+  <div name="mult" hidden id="mult">
+    <h3>Multiple Choice</h3>
+    <select onchange="multRes(this)" class="multipleChoice">
+      <option value=0></option>
+      <option value=2>2</option>
+      <option value=3>3</option>
+      <option value=4>4</option>
+      <option value=5>5</option>
+    </select>
+  </div>
+  <div name="radial" hidden id="radial">
+    <h3>Choose the number of buttons to show</h3>
+    <select id="radioRes" class="radioRes">
+      <option value=0></option>
+      <option value=5>5</option>
+      <option value=10>10</option>
+    </select>
+  </div>
+  <button onclick="complete(0)">Next Question</button>
+  <button onclick="complete(1)">Finished</button>
+</div>

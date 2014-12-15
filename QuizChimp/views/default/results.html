@@ -1,0 +1,5 @@
+{{extend 'layout.html'}}
+<h1>List of People who Responsed to Your Survey</h1>
+{{for r in rows:}}
+  <h3>{{=LI(r.author, _href=URL( 'default', 'rview', args = [r.id, r.author]))}}</h3>
+{{pass}}

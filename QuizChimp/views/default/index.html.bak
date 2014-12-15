@@ -1,0 +1,48 @@
+{{extend 'layout.html'}}
+<!DOCTYPE html>
+
+
+<body>
+<div class="blended_grid">
+<div class="pageLeftMenu">
+    <img src="http://www.careerealism.com/home/jtodonnell/careerealism.com/wp-content/uploads/2014/01/independent-thinking-steps.jpg" style="width:200px;height:250px">
+<br><br><br><br><br>
+    <img src="http://2.bp.blogspot.com/-tCRITn0YYn4/TxKzAWJTCbI/AAAAAAAACts/L0d-bZYx1io/s200/Quiz.jpg" style="width:200px;height:250px">
+</div>
+    <div class="pageContentAbove">
+       <br><br><p style="font-size:55px;color:black;text-shadow:1px 1px 3px #666;">Welcome To QuizChimp</p><br><br><br><br><br>
+        <p style="font-size:20px;color:orange;text-shadow:1px 1px 1px #666;">Where you can create, view, analyze, and take other users' quizzes. <br>You can view the metrics, edit, and share your quizzes.<br><br><br><br>What are you waiting for? Click below to join!</p><br>
+        <p style="font-size: 15px;color:black;"> {{=A('Start Now', _href=URL("user"))}}</p>
+        <p style="font-size: 15px;color:black;"> {{=A('edit page demo', _href=URL("edit"))}}</p>
+        <p style="font-size: 15px;color:black;">{{=A('view quizes', _href=URL("dashboard"))}}</p>
+</div>
+</div>
+</body>
+</html>
+
+
+<style>{
+padding : 0;
+margin : 0;
+border : 0;
+}
+.blended_grid{
+display : block;
+width : 1000px;
+overflow : auto;
+margin : 50px auto 0 auto;
+}
+.pageLeftMenu{
+background-color : rgba(255, 255,255, 0.5);
+float : left;
+clear : none;
+height : 600px;
+width : 250px;
+}
+    .pageContentAbove{
+background-color : rgba(255, 255, 255, 0.5);
+float : left;
+clear : none;
+height : 600px;
+    }
+</style>

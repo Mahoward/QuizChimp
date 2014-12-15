@@ -1,0 +1,9 @@
+{{extend 'layout.html'}}
+<h1>All surveys on the system</h1>
+{{for r in rows:}}
+      {{=TR(r.title, r.description," ",
+         A('Add Questions', _class='btn', _href=URL('default', 'add_q', args=[r.id])),
+         A('View Question List', _class='btn', _href=URL('default', 'view_q', args=[r.id])),
+         _class='dbelement'
+        )}}
+    {{pass}}

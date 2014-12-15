@@ -1,0 +1,128 @@
+# -*- coding: utf-8 -*-
+
+#@auth.requires_login()
+def index():
+    
+    return dict()
+
+@auth.requires_login()
+def create():
+    form = SQLFORM(db.surveys)
+    if form.process().accepted:
+        redirect(URL('default', 'index'))
+    return dict(form=form)
+
+def sview():
+    rows = db(db.surveys).select()
+    return dict(rows=rows)
+
+def add_q():
+    db.questions.survey.default = request.args(0)
+    db.questions.survey.writable = False
+    form = SQLFORM(db.questions,db.responses, buttons=['submit'])
+    if form.process().accepted:
+        redirect(URL('default', 'add_ans', [id]))
+        session.flash = 'Your question has been added.'
+        return dict(form=form)
+
+def answer():
+    rows = db(db.questions).select()
+    return dict(rows=rows)
+
+def metrics():
+    return
+
+def dashboard():
+    rows = db(db.surveys).select()
+    return dict( rows = rows )
+    
+def view_q():
+    rows = db(db.questions.survey == request.args(0)).select()
+    return dict(rows=rows)
+
+def user():
+    """
+    exposes:
+    http://..../[app]/default/user/login
+    http://..../[app]/default/user/logout
+    http://..../[app]/default/user/register
+    http://..../[app]/default/user/profile
+    http://..../[app]/default/user/retrieve_password
+    http://..../[app]/default/user/change_password
+    http://..../[app]/default/user/manage_users (requires membership in
+    use @auth.requires_login()
+        @auth.requires_membership('group name')
+        @auth.requires_permission('read','table name',record_id)
+    to decorate functions that need access control
+    """
+    return dict(form=auth())
+
+
+@cache.action()
+def download():
+    """
+    allows downloading of uploaded files
+    http://..../[app]/default/download/[filename]
+    """
+    return response.download(request, db)
+
+
+def call():
+    """
+    exposes services. for example:
+    http://..../[app]/default/call/jsonrpc
+    decorate with @services.jsonrpc the functions to expose
+    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
+    """
+    return service()
+
+
+@auth.requires_login()
+def api():
+    """
+    this is example of API with access control
+    WEB2PY provides Hypermedia API (Collection+JSON) Experimental
+    """
+    from gluon.contrib.hypermedia import Collection
+    rules = {
+        '<tablename>': {'GET':{},'POST':{},'PUT':{},'DELETE':{}},
+        }
+    return Collection(db).process(request,response,rules)
+
+@auth.requires_login()
+def edit():
+    query=(db.questions.author == get_email())
+    query2= (db.responses.author == get_email())
+
+    fields = (db.questions.question, db.questions.q_type, db.responses.response)
+    fields2= (db.responses.question, db.responses.response)
+
+    headers = {'questions.q_type': 'Question Type', 'questions.question':'Question'}
+    headers2 = {'responses.question':'Question', 'responses.response': 'Response'}
+
+    default_sort_order=[db.questions.question]
+    default_sort_order2=[db.responses.question]
+
+    form = SQLFORM.grid(query=query, fields=fields, headers=headers, orderby=default_sort_order,create=True, deletable=True, editable=True,csv=False, maxtextlength=64, paginate=25)
+
+    form2 = SQLFORM.grid(query=query2, fields=fields2, headers=headers2, orderby=default_sort_order2,create=True, deletable=True, editable=True,csv=False, maxtextlength=64, paginate=25)
+
+    return dict(Edit_Question=form, Edit_Response=form2)
+
+
+@auth.requires_login()
+def owned():
+    rows = db(db.surveys.author == auth.user.email).select(db.surveys.id,db.surveys.title,db.surveys.description)
+    return dict(rows=rows)
+
+@auth.requires_login()
+def completed():
+    rows = db(db.taken_surveys.author == auth.user.email).select(db.taken_surveys.survey)
+    return dict(rows=rows)
+
+@auth.requires_login()
+def view():
+    this_page = db.surveys(request.args(0,cast=int)) or redirect(URL('completed'))
+    rows = db(db.questions.survey == request.args(0)).select(db.questions.id,db.questions.question)
+    responses = db(db.responses.author == get_email()).select(db.responses.question,db.responses.response)
+    return dict(surveys=this_page,rows=rows,responses=responses)

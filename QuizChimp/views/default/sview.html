@@ -1,0 +1,8 @@
+{{extend 'layout.html'}}
+{{for r in rows:}}
+  {{=H1(r.title+":")}}
+  <h3>{{=UL(r.description, _style='list-style-type: none;')}}</h3>
+  {{=A('Add Questions', _class='btn', _href=URL('default', 'add_q', args=[r.id]))}}
+  {{=A('View Question List', _class='btn', _href=URL('default', 'view_q', args=[r.id]))}}
+  {{=A('View Results',  _class='btn', _href=URL('default', 'results', args=[r.id]))}}
+{{pass}}

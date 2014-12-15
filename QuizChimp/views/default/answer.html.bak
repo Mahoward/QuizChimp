@@ -1,0 +1,22 @@
+{{extend 'layout.html'}}
+<h1></h1>
+{{=HEAD( B( str( request.args[0] ).replace( "_", " " ) ) )}}
+<form>
+    {{for r in rows:}}<br>
+      {{if str( r.id ) == request.args[1]:}}
+        {{=LABEL( r.question )}}
+        {{if r.q_type == 1:}}
+          Fill in the blank:<br>
+          {{=INPUT( _type = 'text', _name = r.question, _id = r.question )}}
+        {{elif r.q_type == 2:}}
+          Multiple Choice:<br>
+          {{=INPUT( _type = 'radio', _name = r.question, _id = r.question  )}}
+        {{else:}}
+          Select an answer:<br>
+          {{=INPUT( _type = 'radio', _name = r.question, _id = r.question  )}}
+        {{pass}}
+        <br>
+      {{pass}}
+    {{pass}}
+    {{=INPUT( _type = 'submit', _value = 'submit' )}}
+</form>

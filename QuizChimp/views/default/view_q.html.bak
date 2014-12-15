@@ -1,0 +1,5 @@
+{{extend 'layout.html'}}
+<h1>All Questions For Survey {{=TR(rows.first().survey)}}</h1>
+{{for r in rows:}}
+      {{=TR(r.question," ", r.survey, " ", r.author)}}
+    {{pass}}
